@@ -3,21 +3,21 @@ package MancalaWithoutGUI;
 import java.util.Scanner;
 
 public class Mancala {
-	
+
 	private static boolean player1gameEnd, player2gameEnd;
-	
+
 	static final int STORE1 = 0; // index of gameBoard pit that refers to player 1's store
 	static final int STORE2 = 7; // index of gameBoard pit that refers to player 2's store
 	static final int BOARD_SIZE = 14;  // number of pits
-  
-	static final Scanner scanner = new Scanner(System.in);  
-  
+
+	static final Scanner scanner = new Scanner(System.in);
+
 	// constructor
 	public Mancala() {
 		player1gameEnd = false;
 		player2gameEnd = false;
 	}
-	
+
   /**
    *  Mancala
    */
@@ -30,12 +30,12 @@ public class Mancala {
 	    while (!gameEnd(board)) {
 	      player1IsNext = nextTurn(board, player1IsNext);
 	    }
-	    
+
 	    // end of game
 	    displayFinalScore(board);
 		} while (restart());
 	}
-  
+
 	/**
 	 * Return a boolean to determine if the player wants to restart the game
 	 */
@@ -43,13 +43,13 @@ public class Mancala {
 		char answer;
 		System.out.println("Restart the game? (Y/N)");
 		answer = scanner.next().charAt(0);
-		
+
 		if (answer == 'Y' || answer == 'y')
 			return true;
 		else
 			return false;
 	}
-  
+
   /**
    * Given the state of the board, and the next player to play:
    *  1. displays the current board to screen
@@ -62,7 +62,7 @@ public class Mancala {
     int move = getMove(board, player1IsNext);
     return applyMove(board, player1IsNext, move);
   }
-  
+
   /**
    * Asks the current player for their move. Checks to make sure it is
    * a valid one.
@@ -78,7 +78,7 @@ public class Mancala {
     	System.out.println(Integer.toString(player2Lower) + " to " + Integer.toString(player2Upper) + ":");
     int move = 0;
     boolean validMove = false;
-    
+
     // loop until a valid move is selected
     while (!validMove) {
       move = scanner.nextInt();
@@ -98,7 +98,7 @@ public class Mancala {
     }
     return move;
   }*/
-  
+
   public static int getMove(int[] board, boolean player1IsNext) {
     if (player1IsNext) {
       System.out.println("\nIt is player 1's turn. Enter a house number from 1 to 6:");
@@ -108,7 +108,7 @@ public class Mancala {
     }
     int move = 0;
     boolean validMove = false;
-    
+
     // loop until a valid move is selected
     while (!validMove) {
       move = scanner.nextInt();
@@ -124,7 +124,7 @@ public class Mancala {
     }
     return move;
   }
-  
+
   /**
    * Check if the pit is empty and return a boolean value
    */
@@ -133,7 +133,7 @@ public class Mancala {
 		  return true;
 	  return false;
   }*/
-  
+
   /**
    * Print the game board to screen.
    */
@@ -144,11 +144,11 @@ public class Mancala {
     for (int i = 1; i < 7; i++) {
       System.out.printf("%2d:%2d  ", i, board[i]);
     }
-    
+
     System.out.println();
     System.out.printf("Store 1:%2d                            ", board[STORE1]);  // "%2d" decimal format (2 indicates space 2)
     System.out.printf("Store 2:%2d\n", board[STORE2]);
-    
+
     // Player 2's houses
     System.out.print("    ");
     for (int i = 13; i > 7; i--) {
@@ -156,7 +156,7 @@ public class Mancala {
     }
     System.out.println();
   }
-  
+
   /**
    * Return an int array representing the game board.
    */
@@ -165,10 +165,10 @@ public class Mancala {
 	  for (int i = 0; i < BOARD_SIZE; i++)
 		  board[i] = 4;
 	  board[STORE1] = board[STORE2] = 0;
-	  
+
     return board;
   }
-  
+
   /**
    * Find the correct pit
    */
@@ -178,11 +178,11 @@ public class Mancala {
 		  new_move += BOARD_SIZE;
 	  return new_move;
   }
-  
+
   /**
    * Given the board, the current player, and the house that is selected,
    * move the stones, applying the special rules for capture and extra turns.
-   * 
+   *
    * Returns a boolean, which is:
    *   true - if player 1 is the next player
    *   false - if player 2 is the next player
@@ -191,12 +191,12 @@ public class Mancala {
     // move stones
 	int numOfStones = board[move];
 	int offset = 0;  // ignore the opponent's store
-	
-	board[move] = 0;  // reduce the number of marbles to zero  
-	
+
+	board[move] = 0;  // reduce the number of marbles to zero
+
 	for (int i = 1; i <= numOfStones; i++) {
 		int new_move = newMove(move, i+offset);
-		
+
 		if (player1IsNext) {  // if it's player 1's turn
 			if (new_move == STORE2) {  // if the pit is player 2's store
 				offset++;
@@ -207,11 +207,11 @@ public class Mancala {
 			if (new_move == STORE1) {  // if the pit is player 1's store
 				offset++;
 				new_move = newMove(move, i+offset);
-			}	
+			}
 		}
 		board[new_move]++;  // place one marble into the corresponding pit
 	}
-    
+
     // check if capture
 	int last_move = newMove(move, numOfStones+offset);
 	int opposite = BOARD_SIZE - last_move;
@@ -223,33 +223,33 @@ public class Mancala {
 		nextTurn(board, player1IsNext);
 	} else if (board[last_move] == 1 && board[opposite] >= 1) {
 		numOfStones = board[opposite] + 1;  // store the total number of stones captured by the current player
-		
+
 		// set pits empty
 		board[last_move] = board[opposite] = 0;
-		
+
 		board[player1IsNext ? STORE1 : STORE2] += numOfStones;
 	}
-    
+
     return !player1IsNext;
   }
-  
+
   /**
    * Given a game board, returns true if one side's houses has no seeds (the game is over.)
    * Otherwise, return false.
    */
   public static boolean gameEnd(int[] board) {
 	  boolean allEmpty1 = true, allEmpty2 = true;
-	  
+
 	  // check player 1's pits
 	  for (int i = STORE1+1; i < STORE2; i++)
 		  allEmpty1 &= (board[i] == 0);
 	  setPlayer1gameEnd(allEmpty1);
-	  
+
 	  // check player 2's pits
 	  for (int i = STORE2+1; i < BOARD_SIZE; i++)
 		  allEmpty2 &= (board[i] == 0);
 	  setPlayer2gameEnd(allEmpty2);
-	  
+
 	  // check if the pits of any one of the players are empty, game ends
 	  return player1gameEnd || player2gameEnd;
   }
@@ -259,47 +259,47 @@ public class Mancala {
    */
   	public static void displayFinalScore(int[] board) {
 		  System.out.println("Game Over!");
-		  int stones_remained = 0; 
-		  
+		  int stones_remained = 0;
+
 		  // sum the number of remained stones on player 1's side
 		  for (int i = STORE1+1; i < STORE2; i++) {
 			  stones_remained += board[i];
 		  }
 		  // sum the number of remained stones on player 2's side
 		  for (int i = STORE2+1; i < BOARD_SIZE; i++) {
-			  stones_remained += board[i];		  
+			  stones_remained += board[i];
 		  }
-		  
+
 		  // distribute the remained stones to the player who still has some stones
 		  if (isPlayer1gameEnd())  // if player 1's pits are all emptied
 			  board[STORE2] = stones_remained;
 		  else  // if player 2's pits are all emptied
 			  board[STORE1] = stones_remained;
-		  
+
 		  // calculate score
 		  System.out.println("\nPlayer 1 Score: " + board[STORE1] + "\nPlayer 2 Score: " + board[STORE2]);
-		  
+
 		  if (board[STORE1] > board[STORE2])  // the winner is player 1
 			  System.out.println("\nPlayer 1 Win!!!");
 		  else
 			  System.out.println("\nPlayer 2 Win!!!");
-		  
+
 		  displayBoard(board);
   	}
-  
+
   	// getters and setters of the private fields
 	public static boolean isPlayer1gameEnd() {
 		return player1gameEnd;
 	}
-	
+
 	public static void setPlayer1gameEnd(boolean player1GameEnd) {
 		player1gameEnd = player1GameEnd;
 	}
-	
+
 	public static boolean isPlayer2gameEnd() {
 		return player2gameEnd;
 	}
-	
+
 	public static void setPlayer2gameEnd(boolean player2GameEnd) {
 		player2gameEnd = player2GameEnd;
 	}
