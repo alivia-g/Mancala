@@ -1,5 +1,5 @@
 # Mancala
-An implementation of the board game Mancala with GUI.\
+An implementation of the board game Mancala with GUI.
 
 ### About Mancala
 [Classic Mancala Instruction](https://endlessgames.com/wp-content/uploads/Mancala_Instructions.pdf)
